@@ -1,6 +1,8 @@
+In a folder with the .env file run:
+```bash
 docker build -t dsp-reports .
 docker run --env-file .env -v ./:/app/output dsp-reports
-
+```
 
 Required environment settings for the .env file
 
