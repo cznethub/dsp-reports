@@ -28,7 +28,7 @@ async def main():
     test_submission_count_by_repository = {}
     submission_count_by_cluster = {}
     discoverable_documents_count = 0
-    table = [["id", "repository", "discoverable", "title", "keywords", "funding", "cluster", "submission_date"]]
+    table = [["id", "repository", "discoverable", "keywords", "funding", "cluster", "submission_date"]]
     for submission in await Submission.all().to_list():
         discoverable = False
         if "test" == submission.title.lower() or "asdf" in submission.title:
