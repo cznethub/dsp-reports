@@ -2,3 +2,7 @@ beanie
 motor
 pydantic==1.10.2
 pydantic[email]
+fastapi
+uvicorn
+requests
+pandas

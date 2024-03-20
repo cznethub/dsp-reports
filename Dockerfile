@@ -2,11 +2,10 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-COPY models.py models.py
 COPY requirements.txt requirements.txt
-COPY settings.py settings.py
-COPY submissions_report.py submissions_report.py
-
 RUN pip install -r requirements.txt
 
-CMD ["python", "submissions_report.py"]
+COPY dsp_reports dsp_reports
+ENV PYTHONPATH "${PYTHONPATH}:/app/dsp_reports"
+
+CMD ["python", "dsp_reports/main.py"]
