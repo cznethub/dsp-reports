@@ -93,20 +93,16 @@ async def build_report(request: Request):
             row['funding'] = funding_ids
 
         if row["provider"] == "HydroShare":
-            '''
-            We have to get the sysmeta from hydroshare to deteremine access, collecting urls to async grab and parse later
-            '''
+            # We have to get the sysmeta from hydroshare to deteremine access, collecting urls to async grab and parse later
             urls.append(build_sysmeta_url(row))
-        if row["provider"] == "EarthChem Library":
-            '''
-            This was my best guess for the earthchem states
-            '''
+        elif row["provider"] == "EarthChem Library":
+            # This was my best guess for the earthchem states
             now = datetime.datetime.now()
             if row["datePublished"] > now:
                 row["access"] = AccessState.DISCOVERABLE.name
             else:
                 row["access"] = AccessState.PUBLISHED.name
-        if row["provider"] == "Zenodo":
+        elif row["provider"] == "Zenodo":
             '''
             * open: Open Access
             * embargoed: Embargoed Access
@@ -115,8 +111,9 @@ async def build_report(request: Request):
 
             I'm not completely sure the matching here is correct but I'm not too worried about it with only 1 zenodo submission
             '''
-            document = await db[get_settings().mongo_database]["Submission"].find_one({"identifier": row["repository_identifier"]})
-            access_right = document["metadata"]["access_right"]
+            document = await db[get_settings().mongo_database]["Submission"].find_one({"url": row["url"]})
+            metadata = json.loads(document["metadata_json"])
+            access_right = metadata["metadata"]["access_right"]
             if access_right == "embargoed":
                 row["access"] = AccessState.DISCOVERABLE.name
             elif access_right == "restricted":
@@ -125,6 +122,8 @@ async def build_report(request: Request):
                 row["access"] = AccessState.PUBLISHED.name
             else:
                 row["access"] = AccessState.PUBLIC.name
+        else:
+            row["access"] = AccessState.UNKNOWN.name
     
     access_by_url = retrieve_access(urls)
     for row in json_response:
