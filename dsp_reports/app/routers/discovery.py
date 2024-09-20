@@ -112,6 +112,9 @@ async def build_report(request: Request):
             I'm not completely sure the matching here is correct but I'm not too worried about it with only 1 zenodo submission
             '''
             document = await db[get_settings().mongo_database]["Submission"].find_one({"url": row["url"]})
+            if not document:
+                print(f"No submission found for {row['url']}")
+                continue
             metadata = json.loads(document["metadata_json"])
             access_right = metadata["metadata"]["access_right"]
             if access_right == "embargoed":
