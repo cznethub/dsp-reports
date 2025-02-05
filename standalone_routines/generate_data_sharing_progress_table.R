@@ -41,9 +41,11 @@ dsp_datasets_df <- request(
 
 dsp_datasets_df
 
-dsp_datasets_progress_df <- dsp_datasets_df %>% 
+dsp_datasets_progress_df <- dsp_datasets_df %>%
+  # create a new date column to correspond to initial share date OR publish date
+  mutate(Date=ifelse(access=='PUBLISHED',datePublished,dateCreated)) %>%
   # filter between time range of interest
-  filter(dateCreated>=as.Date(date_start,format='%y%m%d') & dateCreated<=as.Date(date_end,format='%y%m%d')) %>%
+  filter(Date>=as.Date(date_start,format='%y%m%d') & Date <=as.Date(date_end,format='%y%m%d')) %>%
   # add numeric columns for access level for each dataset (1=True, 0=False)
   mutate(
     num_discoverable = ifelse(grepl('DISCOVERABLE', access), 1, 0),
